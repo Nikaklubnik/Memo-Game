@@ -10,4 +10,4 @@ You can check file to see how it works.
 ![I am playing.](screen-shot-2.bmp)
 
 
-Memo-Game: https://nikaklubnik.github.io/Memo-Game/
+Try to play: [Memo-Game](https://nikaklubnik.github.io/Memo-Game/)
