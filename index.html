@@ -1,0 +1,135 @@
+<head>
+    <title>persona game</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        user-select: none;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    section#game-board {
+        display: grid;
+        grid-template-columns: repeat(8, 100px);
+        grid-template-rows: repeat(8, 100px);
+        gap: 20px;
+        justify-items: center;
+        align-items: center;
+    }
+    .card {
+        border-radius: 50%;
+        background-color: darkred;
+        transition: .1s;
+        cursor: pointer;
+    }
+    .card:hover {
+        background-color: rgb(87, 23, 23);
+    }
+    img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        opacity: 0;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .card.flipped>img{
+        opacity: 1;
+    }
+</style>
+<body>
+    <section class="game-board" id="game-board">
+
+    </section>
+</body>
+<script>
+    /* Количество карточек в строке */
+    let count = 8;
+    let count_disable = 0;
+    /* Создание группы для картинок */
+    let images = [];
+    for (let i = 1; i <= 32; i++) {
+        images.push(`${i}.jpg`);
+        images.push(`${i}.jpg`);
+    }
+    
+    /* Перемещиваем список картинок */
+    shuffle(images);
+    
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    
+    function shuffle(array) {
+        array.sort(() => Math.random() - 0.5);
+    }
+    
+    function createBoard() {
+        const gameBoard = document.getElementById('game-board');
+    
+        images.forEach(image => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.image = image;
+    
+            const img = document.createElement('img');
+            img.src = image;
+            card.appendChild(img);
+    
+            card.addEventListener('click', flipCard);
+            gameBoard.appendChild(card);
+        });
+    }
+    
+    function flipCard() {
+        if (lockBoard) return;
+        
+        this.classList.add('flipped');
+    
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+    
+        secondCard = this;
+        lockBoard = true;
+    
+        checkForMatch();
+    }
+    
+    function checkForMatch() {
+        const isMatch = firstCard.dataset.image === secondCard.dataset.image && firstCard !== secondCard;
+    
+        isMatch ? disableCards() : unflipCards();
+    }
+    
+    function disableCards() {
+        count_disable += 2;
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        
+        resetBoard();
+    }
+    
+    function unflipCards() {
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetBoard();
+        }, 1000);
+    }
+    
+    function resetBoard() {
+        [firstCard, secondCard, lockBoard] = [null, null, false];
+    }
+    
+    createBoard();
+    </script>
